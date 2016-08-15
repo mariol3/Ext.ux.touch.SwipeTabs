@@ -45,7 +45,13 @@ Ext.define('Ext.ux.touch.SwipeTabs', {
             'right',
             'up',
             'down'
-        ]
+        ],
+
+        /**
+         * @cfg {Boolean} [excludeTabBar=false] Excludes swipe event from TabBar component
+         * @accessor
+         */
+        excludeTabBar: false
     },
 
     constructor : function(config) {
@@ -60,12 +66,18 @@ Ext.define('Ext.ux.touch.SwipeTabs', {
 
     updateCmp : function(newCmp, oldCmp) {
         if (oldCmp) {
-            oldCmp.element.un('swipe', this.onSwipe);
+            this.getCmpElement(oldCmp).un('swipe', this.onSwipe);
         }
 
         if (newCmp) {
-            newCmp.element.on('swipe', this.onSwipe, this);
+            this.getCmpElement(newCmp).on('swipe', this.onSwipe, this);
         }
+    },
+
+    getCmpElement: function (cmp) {
+        return this.getExcludeTabBar()
+                ? cmp.element.down('.x-inner.x-layout-card')
+                : cmp.element;
     },
 
     onSwipe : function(e) {
